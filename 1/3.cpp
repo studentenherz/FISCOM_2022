@@ -71,11 +71,11 @@ public:
 
 int main(){
 	const double g = 9.81;
-	ElasticPendulum<double, variable_type> f(1, 1, 1, g);
+	ElasticPendulum<double, variable_type> f(10, 1, 1, 10);
 
 	RK4<ElasticPendulum<double, variable_type> , variable_type, double> stepper;
 
-	variable_type x{M_PI / 6, 1, 0, 0};
+	variable_type x{0.1, 1.1, 0, 0};
 	double t0 = 0;
 	double dt = 0.001;
 	size_t N = 100000;
