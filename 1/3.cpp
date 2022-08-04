@@ -2,6 +2,9 @@
 #include <array>
 #include <cmath>
 
+#include "odeint/integarte.hpp"
+#include "odeint/steppers/rk4.hpp"
+
 typedef std::array<double, 4> variable_type;
 
 variable_type operator+(variable_type a, variable_type b){
@@ -43,10 +46,17 @@ public:
 	// x = (phi, l, v_phi, v_l)
 	variable_type operator()(variable_type x, scalar_type /* t */ ){
 		variable_type dxdt;
-		dxdt[0] = x[2];
-		dxdt[1] = x[3];
-		dxdt[2] = - x[2] * x[3] / x[1] - g * sin(x[0]);
-		dxdt[3] = x[1] * x[2] * x[2] - k * (x[1] - l0) / m + g * cos(x[0]);
+		// Hamiltonian
+		dxdt[0] = x[2] /  (m * x[1] * x[1]);
+		dxdt[1] = x[3] / m;
+		dxdt[2] = - m * g * x[1] * sin(x[0]);
+		dxdt[3] = - k * (x[1] - l0) + m * g * cos(x[0]);
+
+		// // Lagrangian
+		// dxdt[0] = x[2];
+		// dxdt[1] = x[3];
+		// dxdt[2] =  2 * x[2] * x[3] / x[1] - g * sin(x[0]) / x[1];
+		// dxdt[3] = x[1] * x[2] * x[2] - k * (x[1] - l0) / m + g * cos(x[0]);
 
 		return dxdt;
 	}
@@ -66,16 +76,13 @@ public:
 	}
 };
 
-#include "odeint/integarte.hpp"
-#include "odeint/steppers/rk4.hpp"
 
-int main(){
-	const double g = 9.81;
-	ElasticPendulum<double, variable_type> f(10, 1, 1, 10);
+int main(int argc, char* argv[]){
+	ElasticPendulum<double, variable_type> f(1000, 1, 1, 10);
 
 	RK4<ElasticPendulum<double, variable_type> , variable_type, double> stepper;
 
-	variable_type x{0.1, 1.1, 0, 0};
+	variable_type x{0.3, 1, 0, 0};
 	double t0 = 0;
 	double dt = 0.001;
 	size_t N = 100000;

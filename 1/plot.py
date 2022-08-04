@@ -22,5 +22,6 @@ spring, = plt.plot([0, x[-1]], [0, y[-1]], c='#AAA')
 ball, = plt.plot(x[-1], y[-1], 'o', markersize=10, c='k')
 
 anim = FuncAnimation(fig, upadte_line, len(x) // ff, fargs=(x, y, line, spring, ball), interval=1)
+ax.set_aspect('equal')
 
 plt.show()
